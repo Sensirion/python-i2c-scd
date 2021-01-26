@@ -8,22 +8,33 @@ check_editorconfig:
 
 py2p7_linux_build:
   extends: .py2p7_linux_build_v2
+  variables:
+    PYTEST_ADDOPTS: '-m "not needs_device"'
 
 py3p5_linux_build:
   extends: .py3p5_linux_build_v2
+  variables:
+    PYTEST_ADDOPTS: '-m "not needs_device"'
 
 py3p8_linux_build:
   extends: .py3p8_linux_build_v2
-
+  variables:
+    PYTEST_ADDOPTS: '-m "not needs_device"'
 
 py2p7_32bit_win_build:
   extends: .py2p7_32bit_win_docker_build_v2
+  variables:
+    PYTEST_ADDOPTS: '-m "not needs_device"'
 
 py3p5_64bit_win_build:
   extends: .py3p5_64bit_win_docker_build_v2
+  variables:
+    PYTEST_ADDOPTS: '-m "not needs_device"'
 
 py3p8_64bit_win_build:
   extends: .py3p8_64bit_win_docker_build_v2
+  variables:
+    PYTEST_ADDOPTS: '-m "not needs_device"'
 
 build_docs:
   extends: .build_docs_v2

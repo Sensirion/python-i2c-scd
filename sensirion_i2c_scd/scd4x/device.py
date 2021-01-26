@@ -4,6 +4,7 @@
 from __future__ import absolute_import, division, print_function
 
 from sensirion_i2c_driver import I2cDevice
+from sensirion_i2c_driver.errors import I2cNackError
 
 from .commands import Scd4xI2cCmdGetSerialNumber, Scd4xI2cCmdStartPeriodicMeasurement, \
     Scd4xI2cCmdStartLowPowerPeriodicMeasurement, Scd4xI2cCmdReadMeasurement, Scd4xI2cCmdStopPeriodicMeasurement, \
@@ -315,4 +316,9 @@ class Scd4xI2cDevice(I2cDevice):
 
         .. note:: Only available in sleep mode.
         """
-        return self.execute(Scd4xI2cCmdWakeUp())
+        try:
+            self.execute(Scd4xI2cCmdWakeUp())
+        except I2cNackError:
+            # This command might result in a I2C NACK if the SCD4x
+            # can't wake up fast enough to respond on time
+            pass

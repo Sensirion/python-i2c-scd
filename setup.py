@@ -21,6 +21,7 @@ extras_require = {
         'flake8~=3.7.8',
         'pytest~=3.5.0',
         'pytest-cov~=2.5.1',
+        'sensirion-shdlc-sensorbridge~=0.1.1'
     ],
     'docs': [
         'sphinx~=2.2.1',
@@ -56,7 +57,7 @@ setup(
     author='Pascal Sachs',
     author_email='pascal.sachs@sensirion.com',
     description='I2C driver for the Sensirion CO2 Sensor SCD4x',
-    license='proprietary',
+    license='BSD',
     keywords='I2C SCD4x SCD41 Sensirion',
     url='http://developers.sensirion.com',
     packages=find_packages(exclude=['tests', 'tests.*']),

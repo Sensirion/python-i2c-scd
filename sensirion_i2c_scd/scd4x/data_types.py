@@ -35,7 +35,7 @@ class Scd4xTemperatureOffsetDegC(object):
         """
 
         #: The converted temperature offset in °C.
-        self.degrees_celsius = degree_celsius
+        self.degrees_celsius = float(degree_celsius)
 
         #: The converted temperature offset in °F.
         self.degrees_fahrenheit = 32. + (self.degrees_celsius * 9. / 5.)
