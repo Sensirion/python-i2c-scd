@@ -12,6 +12,7 @@ python_requires = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4'
 # Packages that this package imports. List everything apart from standard lib packages.
 install_requires = [
     'sensirion-i2c-driver~=1.0.0',
+    'enum34;python_version<"3.4"',
 ]
 
 # Packages required for tests and docs

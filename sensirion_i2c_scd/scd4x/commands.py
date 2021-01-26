@@ -5,12 +5,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-import logging
 from struct import pack, unpack
 
 from sensirion_i2c_driver import SensirionI2cCommand, CrcCalculator
 
-log = logging.getLogger(__name__)
+from sensirion_i2c_scd.scd4x.response_types import Scd4xHumidity, Scd4xCarbonDioxid, Scd4xTemperature
+from sensirion_i2c_scd.scd4x.data_types import Scd4xTemperatureOffsetDegC
+from sensirion_i2c_scd.scd4x.response_types import Scd4xTemperatureOffset
 
 
 class Scd4xI2cCmdBase(SensirionI2cCommand):
@@ -128,12 +129,12 @@ class Scd4xI2cCmdReadMeasurement(Scd4xI2cCmdBase):
         :param bytes data:
             Received raw bytes from the read operation.
         :return:
-            - co2 (int) -
-              CO₂ concentration in ppm
-            - temperature (int) -
-              Convert value to °C by: -45 °C + 175 °C * value/2^16
-            - humidity (int) -
-              Convert value to %RH by: 100%RH * value/2^16
+            - co2 (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid`) -
+              CO₂ response object
+            - temperature (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xTemperature`) -
+              Temperature response object.
+            - humidity (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xHumidity`) -
+              Humidity response object
         :rtype: tuple
         :raise ~sensirion_i2c_driver.errors.I2cChecksumError:
             If a received CRC was wrong.
@@ -145,7 +146,7 @@ class Scd4xI2cCmdReadMeasurement(Scd4xI2cCmdBase):
         co2 = int(unpack(">H", checked_data[0:2])[0])  # uint16
         temperature = int(unpack(">H", checked_data[2:4])[0])  # uint16
         humidity = int(unpack(">H", checked_data[4:6])[0])  # uint16
-        return co2, temperature, humidity
+        return Scd4xCarbonDioxid(co2), Scd4xTemperature(temperature), Scd4xHumidity(humidity)
 
 
 class Scd4xI2cCmdStopPeriodicMeasurement(Scd4xI2cCmdBase):
@@ -203,9 +204,9 @@ class Scd4xI2cCmdGetTemperatureOffset(Scd4xI2cCmdBase):
 
         :param bytes data:
             Received raw bytes from the read operation.
-        :return: Temperature offset. Convert value to °C by: 175 * value /
-                 2^16
-        :rtype: int
+        :return:
+            - temperature offset (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xTemperatureOffset`) -
+              TemperatureOffset response object.
         :raise ~sensirion_i2c_driver.errors.I2cChecksumError:
             If a received CRC was wrong.
         """
@@ -214,7 +215,7 @@ class Scd4xI2cCmdGetTemperatureOffset(Scd4xI2cCmdBase):
 
         # convert raw received data into proper data types
         t_offset = int(unpack(">H", checked_data[0:2])[0])  # uint16
-        return t_offset
+        return Scd4xTemperatureOffset(t_offset)
 
 
 class Scd4xI2cCmdSetTemperatureOffset(Scd4xI2cCmdBase):
@@ -237,11 +238,11 @@ class Scd4xI2cCmdSetTemperatureOffset(Scd4xI2cCmdBase):
         Constructor.
 
         :param int t_offset:
-            Temperature offset. Convert °C to value by: T * 2^16 / 175.
+            Temperature offset in degree celsius
         """
         super(Scd4xI2cCmdSetTemperatureOffset, self).__init__(
             command=0x241D,
-            tx_data=b"".join([pack(">H", t_offset)]),
+            tx_data=b"".join([pack(">H", Scd4xTemperatureOffsetDegC(t_offset).ticks)]),
             rx_length=None,
             read_delay=0.0,
             timeout=0,
@@ -388,7 +389,7 @@ class Scd4xI2cCmdPerformForcedRecalibration(Scd4xI2cCmdBase):
         :param bytes data:
             Received raw bytes from the read operation.
         :return: FRC correction value in CO₂ ppm or 0xFFFF if the command
-                 failed. Convert value to CO₂ ppm with: value - 0x8000
+                 failed.
         :rtype: int
         :raise ~sensirion_i2c_driver.errors.I2cChecksumError:
             If a received CRC was wrong.
@@ -398,6 +399,8 @@ class Scd4xI2cCmdPerformForcedRecalibration(Scd4xI2cCmdBase):
 
         # convert raw received data into proper data types
         frc_correction = int(unpack(">H", checked_data[0:2])[0])  # uint16
+        if frc_correction != 0xFFFF:
+            return frc_correction - 0x8000
         return frc_correction
 
 
@@ -591,12 +594,7 @@ class Scd4xI2cCmdGetSerialNumber(Scd4xI2cCmdBase):
         :param bytes data:
             Received raw bytes from the read operation.
         :return:
-            - serial_0 (int) -
-              First word of the 48 bit serial number
-            - serial_1 (int) -
-              Second word of the 48 bit serial number
-            - serial_2 (int) -
-              Third word of the 48 bit serial number
+            - serial_number (int) - 48 bit serial number
         :rtype: tuple
         :raise ~sensirion_i2c_driver.errors.I2cChecksumError:
             If a received CRC was wrong.
@@ -608,7 +606,7 @@ class Scd4xI2cCmdGetSerialNumber(Scd4xI2cCmdBase):
         serial_0 = int(unpack(">H", checked_data[0:2])[0])  # uint16
         serial_1 = int(unpack(">H", checked_data[2:4])[0])  # uint16
         serial_2 = int(unpack(">H", checked_data[4:6])[0])  # uint16
-        return serial_0, serial_1, serial_2
+        return serial_0 << 32 | serial_1 << 16 | serial_2
 
 
 class Scd4xI2cCmdPerformSelfTest(Scd4xI2cCmdBase):
