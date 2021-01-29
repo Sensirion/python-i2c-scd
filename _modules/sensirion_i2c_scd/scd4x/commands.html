@@ -1,0 +1,1008 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sensirion_i2c_scd.scd4x.commands &mdash; sensirion-i2c-scd 0.1.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/banner.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> sensirion-i2c-scd
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">sensirion-i2c-scd</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sensirion_i2c_scd.scd4x.commands</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sensirion_i2c_scd.scd4x.commands</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># (c) Copyright 2021 Sensirion AG, Switzerland</span>
+
+<span class="c1"># flake8: noqa</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">struct</span> <span class="kn">import</span> <span class="n">pack</span><span class="p">,</span> <span class="n">unpack</span>
+
+<span class="kn">from</span> <span class="nn">sensirion_i2c_driver</span> <span class="kn">import</span> <span class="n">SensirionI2cCommand</span><span class="p">,</span> <span class="n">CrcCalculator</span>
+
+<span class="kn">from</span> <span class="nn">sensirion_i2c_scd.scd4x.response_types</span> <span class="kn">import</span> <span class="n">Scd4xHumidity</span><span class="p">,</span> <span class="n">Scd4xCarbonDioxid</span><span class="p">,</span> <span class="n">Scd4xTemperature</span>
+<span class="kn">from</span> <span class="nn">sensirion_i2c_scd.scd4x.data_types</span> <span class="kn">import</span> <span class="n">Scd4xTemperatureOffsetDegC</span>
+<span class="kn">from</span> <span class="nn">sensirion_i2c_scd.scd4x.response_types</span> <span class="kn">import</span> <span class="n">Scd4xTemperatureOffset</span>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdBase"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdBase">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdBase</span><span class="p">(</span><span class="n">SensirionI2cCommand</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SCD4x I²C base command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdBase.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdBase.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">tx_data</span><span class="p">,</span> <span class="n">rx_length</span><span class="p">,</span> <span class="n">read_delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span>
+                 <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs a new SCD4x I²C command.</span>
+
+<span class="sd">        :param int/None command:</span>
+<span class="sd">            The command ID to be sent to the device. None means that no</span>
+<span class="sd">            command will be sent, i.e. only ``tx_data`` (if not None) will</span>
+<span class="sd">            be sent. No CRC is added to these bytes since the command ID</span>
+<span class="sd">            usually already contains a CRC.</span>
+<span class="sd">        :param bytes-like/list/None tx_data:</span>
+<span class="sd">            Bytes to be extended with CRCs and then sent to the I²C device.</span>
+<span class="sd">            None means that no write header will be sent at all (if ``command``</span>
+<span class="sd">            is None too). An empty list means to send the write header (even if</span>
+<span class="sd">            ``command`` is None), but without data following it.</span>
+<span class="sd">        :param int/None rx_length:</span>
+<span class="sd">            Number of bytes to be read from the I²C device, including CRC</span>
+<span class="sd">            bytes. None means that no read header is sent at all. Zero means</span>
+<span class="sd">            to send the read header, but without reading any data.</span>
+<span class="sd">        :param float read_delay:</span>
+<span class="sd">            Delay (in Seconds) to be inserted between the end of the write</span>
+<span class="sd">            operation and the beginning of the read operation. This is needed</span>
+<span class="sd">            if the device needs some time to prepare the RX data, e.g. if it</span>
+<span class="sd">            has to perform a measurement. Set to 0.0 to indicate that no delay</span>
+<span class="sd">            is needed, i.e. the device does not need any processing time.</span>
+<span class="sd">        :param float timeout:</span>
+<span class="sd">            Timeout (in Seconds) to be used in case of clock stretching. If the</span>
+<span class="sd">            device stretches the clock longer than this value, the transceive</span>
+<span class="sd">            operation will be aborted with a timeout error. Set to 0.0 to</span>
+<span class="sd">            indicate that the device will not stretch the clock for this</span>
+<span class="sd">            command.</span>
+<span class="sd">        :param float post_processing_time:</span>
+<span class="sd">            Maximum time in seconds the device needs for post processing of</span>
+<span class="sd">            this command until it is ready to receive the next command. For</span>
+<span class="sd">            example after a device reset command, the device might need some</span>
+<span class="sd">            time until it is ready again. Usually this is 0.0s, i.e. no post</span>
+<span class="sd">            processing is needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="n">tx_data</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="n">rx_length</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="n">read_delay</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="n">crc</span><span class="o">=</span><span class="n">CrcCalculator</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">),</span>
+            <span class="n">command_bytes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="n">post_processing_time</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdStartPeriodicMeasurement"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdStartPeriodicMeasurement">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdStartPeriodicMeasurement</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start Periodic Measurement I²C Command</span>
+
+<span class="sd">    start periodic measurement, signal update interval is 5 seconds.</span>
+
+<span class="sd">    .. note:: This command is only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdStartPeriodicMeasurement.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdStartPeriodicMeasurement.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdStartPeriodicMeasurement</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x21B1</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdReadMeasurement"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdReadMeasurement">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdReadMeasurement</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read Measurement I²C Command</span>
+
+<span class="sd">    read sensor output. The measurement data can only be read out once per</span>
+<span class="sd">    signal update interval as the buffer is emptied upon read-out. If no data</span>
+<span class="sd">    is available in the buffer, the sensor returns a NACK. To avoid a NACK</span>
+<span class="sd">    response the get_data_ready_status can be issued to check data status. The</span>
+<span class="sd">    I2C master can abort the read transfer with a NACK followed by a STOP</span>
+<span class="sd">    condition after any data byte if the user is not interested in subsequent</span>
+<span class="sd">    data.</span>
+
+<span class="sd">    .. note:: This command is only available in measurement mode. The firmware</span>
+<span class="sd">              updates the measurement values depending on the measurement mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdReadMeasurement.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdReadMeasurement.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdReadMeasurement</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0xEC05</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdReadMeasurement.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdReadMeasurement.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return:</span>
+<span class="sd">            - co2 (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid`) -</span>
+<span class="sd">              CO₂ response object</span>
+<span class="sd">            - temperature (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xTemperature`) -</span>
+<span class="sd">              Temperature response object.</span>
+<span class="sd">            - humidity (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xHumidity`) -</span>
+<span class="sd">              Humidity response object</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">co2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="n">humidity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">Scd4xCarbonDioxid</span><span class="p">(</span><span class="n">co2</span><span class="p">),</span> <span class="n">Scd4xTemperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">),</span> <span class="n">Scd4xHumidity</span><span class="p">(</span><span class="n">humidity</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdStopPeriodicMeasurement"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdStopPeriodicMeasurement">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdStopPeriodicMeasurement</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stop Periodic Measurement I²C Command</span>
+
+<span class="sd">    Stop periodic measurement and return to idle mode for sensor configuration</span>
+<span class="sd">    or to safe energy.</span>
+
+<span class="sd">    .. note:: This command is only available in measurement mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdStopPeriodicMeasurement.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdStopPeriodicMeasurement.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdStopPeriodicMeasurement</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x3F86</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetTemperatureOffset"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetTemperatureOffset">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdGetTemperatureOffset</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Temperature Offset I²C Command</span>
+
+<span class="sd">    The temperature offset represents the difference between the measured</span>
+<span class="sd">    temperature by the SCD4x and the actual ambient temperature. Per default,</span>
+<span class="sd">    the temperature offset is set to 4°C.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetTemperatureOffset.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetTemperatureOffset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdGetTemperatureOffset</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x2318</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetTemperatureOffset.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetTemperatureOffset.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return:</span>
+<span class="sd">            - temperature offset (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xTemperatureOffset`) -</span>
+<span class="sd">              TemperatureOffset response object.</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">t_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">Scd4xTemperatureOffset</span><span class="p">(</span><span class="n">t_offset</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetTemperatureOffset"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetTemperatureOffset">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdSetTemperatureOffset</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set Temperature Offset I²C Command</span>
+
+<span class="sd">    Setting the temperature offset of the SCD4x inside the customer device</span>
+<span class="sd">    correctly allows the user to leverage the RH and T output signal. Note that</span>
+<span class="sd">    the temperature offset can depend on various factors such as the SCD4x</span>
+<span class="sd">    measurement mode, self-heating of close components, the ambient temperature</span>
+<span class="sd">    and air flow. Thus, the SCD4x temperature offset should be determined</span>
+<span class="sd">    inside the customer device under its typical operation and in thermal</span>
+<span class="sd">    equilibrium.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetTemperatureOffset.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetTemperatureOffset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_offset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param int t_offset:</span>
+<span class="sd">            Temperature offset in degree celsius</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdSetTemperatureOffset</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x241D</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">Scd4xTemperatureOffsetDegC</span><span class="p">(</span><span class="n">t_offset</span><span class="p">)</span><span class="o">.</span><span class="n">ticks</span><span class="p">)]),</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetSensorAltitude"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetSensorAltitude">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdGetSensorAltitude</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Sensor Altitude I²C Command</span>
+
+<span class="sd">    Get configured sensor altitude in meters above sea level. Per default, the</span>
+<span class="sd">    sensor altitude is set to 0 meter above sea-level.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetSensorAltitude.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetSensorAltitude.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdGetSensorAltitude</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x2322</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetSensorAltitude.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetSensorAltitude.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return: Sensor altitude in meters.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">sensor_altitude</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">sensor_altitude</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetSensorAltitude"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetSensorAltitude">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdSetSensorAltitude</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set Sensor Altitude I²C Command</span>
+
+<span class="sd">    Set sensor altitude in meters above sea level. Note that setting a sensor</span>
+<span class="sd">    altitude to the sensor overrides any pressure compensation based on a</span>
+<span class="sd">    previously set ambient pressure.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetSensorAltitude.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetSensorAltitude.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensor_altitude</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param int sensor_altitude:</span>
+<span class="sd">            Sensor altitude in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdSetSensorAltitude</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x2427</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">sensor_altitude</span><span class="p">)]),</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetAmbientPressure"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetAmbientPressure">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdSetAmbientPressure</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set Ambient Pressure I²C Command</span>
+
+<span class="sd">    The set_ambient_pressure command can be sent during periodic measurements</span>
+<span class="sd">    to enable continuous pressure compensation. Note that setting an ambient</span>
+<span class="sd">    pressure to the sensor overrides any pressure compensation based on a</span>
+<span class="sd">    previously set sensor altitude.</span>
+
+<span class="sd">    .. note:: Available during measurements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetAmbientPressure.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetAmbientPressure.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ambient_pressure</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param int ambient_pressure:</span>
+<span class="sd">            Ambient pressure in hPa. Convert value to Pa by: value * 100.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdSetAmbientPressure</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0xE000</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">ambient_pressure</span><span class="p">)]),</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformForcedRecalibration"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformForcedRecalibration">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdPerformForcedRecalibration</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform Forced Recalibration I²C Command</span>
+
+<span class="sd">    To successfully conduct an accurate forced recalibration, the following</span>
+<span class="sd">    steps need to be carried out:</span>
+
+<span class="sd">    1. Operate the SCD4x in a periodic measurement mode for &gt; 3 minutes in an</span>
+<span class="sd">       environment with homogenous and constant CO₂ concentration.</span>
+<span class="sd">    2. Stop periodic measurement. Wait 500 ms.</span>
+<span class="sd">    3. Subsequently issue the perform_forced_recalibration command and</span>
+<span class="sd">       optionally read out the baseline correction. A return value of 0xffff</span>
+<span class="sd">       indicates that the forced recalibration failed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformForcedRecalibration.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformForcedRecalibration.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_co2_concentration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param int target_co2_concentration:</span>
+<span class="sd">            Target CO₂ concentration in ppm.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdPerformForcedRecalibration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x362F</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">target_co2_concentration</span><span class="p">)]),</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformForcedRecalibration.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformForcedRecalibration.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return: FRC correction value in CO₂ ppm or 0xFFFF if the command</span>
+<span class="sd">                 failed.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">frc_correction</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">if</span> <span class="n">frc_correction</span> <span class="o">!=</span> <span class="mh">0xFFFF</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">frc_correction</span> <span class="o">-</span> <span class="mh">0x8000</span>
+        <span class="k">return</span> <span class="n">frc_correction</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetAutomaticSelfCalibration"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetAutomaticSelfCalibration">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdGetAutomaticSelfCalibration</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Automatic Self Calibration I²C Command</span>
+
+<span class="sd">    By default, the ASC is enabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetAutomaticSelfCalibration.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetAutomaticSelfCalibration.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdGetAutomaticSelfCalibration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x2313</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetAutomaticSelfCalibration.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetAutomaticSelfCalibration.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return: 1 if ASC is enabled, 0 if ASC is disabled</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">asc_enabled</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">asc_enabled</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetAutomaticSelfCalibration"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetAutomaticSelfCalibration">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdSetAutomaticSelfCalibration</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set Automatic Self Calibration I²C Command</span>
+
+<span class="sd">    By default, the ASC is enabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdSetAutomaticSelfCalibration.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdSetAutomaticSelfCalibration.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asc_enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param int asc_enabled:</span>
+<span class="sd">            1 to enable ASC, 0 to disable ASC</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdSetAutomaticSelfCalibration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x2416</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">asc_enabled</span><span class="p">)]),</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdStartLowPowerPeriodicMeasurement"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdStartLowPowerPeriodicMeasurement">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdStartLowPowerPeriodicMeasurement</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start Low Power Periodic Measurement I²C Command</span>
+
+<span class="sd">    Start low power periodic measurement, signal update interval is 30 seconds.</span>
+
+<span class="sd">    .. note:: This command is only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdStartLowPowerPeriodicMeasurement.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdStartLowPowerPeriodicMeasurement.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdStartLowPowerPeriodicMeasurement</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x21AC</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetDataReadyStatus"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetDataReadyStatus">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdGetDataReadyStatus</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Data Ready Status I²C Command</span>
+
+<span class="sd">    Check whether new measurement data is available for read-out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetDataReadyStatus.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetDataReadyStatus.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdGetDataReadyStatus</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0xE4B8</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetDataReadyStatus.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetDataReadyStatus.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return: If last 11 bits are 0 data not ready, else data ready</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">data_ready</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">data_ready</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdPersistSettings"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPersistSettings">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdPersistSettings</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Persist Settings I²C Command</span>
+
+<span class="sd">    Configuration settings such as the temperature offset, sensor altitude and</span>
+<span class="sd">    the ASC enabled/disabled parameter are by default stored in the volatile</span>
+<span class="sd">    memory (RAM) only and will be lost after a power-cycle. This command stores</span>
+<span class="sd">    the current configuration in the EEPROM of the SCD4x, making them</span>
+<span class="sd">    persistent across power-cycling.</span>
+
+<span class="sd">    .. note:: To avoid unnecessary wear of the EEPROM, this command should only</span>
+<span class="sd">              be sent when persistence is required and if actual changes to the</span>
+<span class="sd">              configuration have been made (The EEPROM is guaranteed to endure</span>
+<span class="sd">              at least 2000 write cycles before failure). Note that field</span>
+<span class="sd">              calibration history (i.e. FRC and ASC) is automatically stored in</span>
+<span class="sd">              a separate EEPROM dimensioned for specified sensor lifetime.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPersistSettings.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPersistSettings.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdPersistSettings</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x3615</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetSerialNumber"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetSerialNumber">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdGetSerialNumber</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Serial Number I²C Command</span>
+
+<span class="sd">    Reading out the serial number can be used to identify the chip and to</span>
+<span class="sd">    verify the presence of the sensor. The get serial number command returns 3</span>
+<span class="sd">    words. Together, the 3 words constitute a unique serial number with a</span>
+<span class="sd">    length of 48 bits (big endian format).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetSerialNumber.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetSerialNumber.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdGetSerialNumber</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x3682</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdGetSerialNumber.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdGetSerialNumber.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return:</span>
+<span class="sd">            - serial_number (int) - 48 bit serial number</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">serial_0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="n">serial_1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="n">serial_2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">serial_0</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">|</span> <span class="n">serial_1</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span> <span class="o">|</span> <span class="n">serial_2</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformSelfTest"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformSelfTest">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdPerformSelfTest</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform Self Test I²C Command</span>
+
+<span class="sd">    The perform_self_test feature can be used as an end-of-line test to confirm</span>
+<span class="sd">    sensor functionality.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformSelfTest.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformSelfTest.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdPerformSelfTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x3639</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformSelfTest.interpret_response"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformSelfTest.interpret_response">[docs]</a>    <span class="k">def</span> <span class="nf">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the CRCs of the received data from the device and returns</span>
+<span class="sd">        the interpreted data.</span>
+
+<span class="sd">        :param bytes data:</span>
+<span class="sd">            Received raw bytes from the read operation.</span>
+<span class="sd">        :return: 0 means no malfunction detected</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:</span>
+<span class="sd">            If a received CRC was wrong.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check and remove CRCs</span>
+        <span class="n">checked_data</span> <span class="o">=</span> <span class="n">Scd4xI2cCmdBase</span><span class="o">.</span><span class="n">interpret_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert raw received data into proper data types</span>
+        <span class="n">sensor_status</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&gt;H&quot;</span><span class="p">,</span> <span class="n">checked_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># uint16</span>
+        <span class="k">return</span> <span class="n">sensor_status</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformFactoryReset"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformFactoryReset">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdPerformFactoryReset</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform Factory Reset I²C Command</span>
+
+<span class="sd">    Initiates the reset of all configurations stored in the EEPROM and erases</span>
+<span class="sd">    the FRC and ASC algorithm history.</span>
+
+<span class="sd">    .. note:: To avoid unnecessary wear of the EEPROM, this command should only</span>
+<span class="sd">              be sent when actual changes to the configuration have been made</span>
+<span class="sd">              which should be reverted (The EEPROM is guaranteed to endure at</span>
+<span class="sd">              least 2000 write cycles before failure). Note that field</span>
+<span class="sd">              calibration history (i.e. FRC and ASC) is automatically stored in</span>
+<span class="sd">              a separate EEPROM dimensioned for specified sensor lifetime.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPerformFactoryReset.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPerformFactoryReset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdPerformFactoryReset</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x3632</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdReinit"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdReinit">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdReinit</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reinit I²C Command</span>
+
+<span class="sd">    The reinit command reinitializes the sensor by reloading user settings from</span>
+<span class="sd">    EEPROM. Before sending the reinit command, the stop measurement command</span>
+<span class="sd">    must be issued. If reinit command does not trigger the desired</span>
+<span class="sd">    re-initialization, a power-cycle should be applied to the SCD4x.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdReinit.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdReinit.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdReinit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x3646</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdMeasureSingleShot"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdMeasureSingleShot">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdMeasureSingleShot</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measure Single Shot I²C Command</span>
+
+<span class="sd">    On-demand measurement of CO₂ concentration, relative humidity and</span>
+<span class="sd">    temperature. The sensor output is read with the read_measurement command.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdMeasureSingleShot.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdMeasureSingleShot.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdMeasureSingleShot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x219D</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">1.35</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdMeasureSingleShotRhtOnly"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdMeasureSingleShotRhtOnly">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdMeasureSingleShotRhtOnly</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measure Single Shot Rht Only I²C Command</span>
+
+<span class="sd">    On-demand measurement of relative humidity and temperature only.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdMeasureSingleShotRhtOnly.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdMeasureSingleShotRhtOnly.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdMeasureSingleShotRhtOnly</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x2196</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdPowerDown"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPowerDown">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdPowerDown</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Power Down I²C Command</span>
+
+<span class="sd">    Put the sensor from idle to sleep mode to reduce current consumption.</span>
+
+<span class="sd">    .. note:: Only available in idle mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdPowerDown.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdPowerDown.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdPowerDown</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x36E0</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scd4xI2cCmdWakeUp"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdWakeUp">[docs]</a><span class="k">class</span> <span class="nc">Scd4xI2cCmdWakeUp</span><span class="p">(</span><span class="n">Scd4xI2cCmdBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wake Up I²C Command</span>
+
+<span class="sd">    Wake up sensor from sleep mode to idle mode.</span>
+
+<span class="sd">    .. note:: Only available in sleep mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scd4xI2cCmdWakeUp.__init__"><a class="viewcode-back" href="../../../api.html#sensirion_i2c_scd.scd4x.commands.Scd4xI2cCmdWakeUp.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scd4xI2cCmdWakeUp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="mh">0x36F6</span><span class="p">,</span>
+            <span class="n">tx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">rx_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">read_delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">post_processing_time</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021 Sensirion AG, Switzerland
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: master
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../../../master/_modules/sensirion_i2c_scd/scd4x/commands.html">master</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
