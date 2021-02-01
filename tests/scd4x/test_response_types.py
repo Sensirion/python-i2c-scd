@@ -2,7 +2,7 @@
 # (c) Copyright 2021 Sensirion AG, Switzerland
 
 from __future__ import absolute_import, division, print_function
-from sensirion_i2c_scd.scd4x.response_types import Scd4xCarbonDioxid, Scd4xTemperature, Scd4xHumidity, \
+from sensirion_i2c_scd.scd4x.response_types import Scd4xCarbonDioxide, Scd4xTemperature, Scd4xHumidity, \
     Scd4xTemperatureOffset
 import pytest
 
@@ -15,8 +15,8 @@ def test_co2(value):
     """
     Test if the CO2() type works as expected for different values.
     """
-    result = Scd4xCarbonDioxid(value.get('ticks'))
-    assert type(result) is Scd4xCarbonDioxid
+    result = Scd4xCarbonDioxide(value.get('ticks'))
+    assert type(result) is Scd4xCarbonDioxide
     assert type(result.ticks) is int
     assert result.ticks == value.get('ticks')
     assert type(result.co2) is int

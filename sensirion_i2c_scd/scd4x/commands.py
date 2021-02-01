@@ -9,7 +9,7 @@ from struct import pack, unpack
 
 from sensirion_i2c_driver import SensirionI2cCommand, CrcCalculator
 
-from sensirion_i2c_scd.scd4x.response_types import Scd4xHumidity, Scd4xCarbonDioxid, Scd4xTemperature
+from sensirion_i2c_scd.scd4x.response_types import Scd4xHumidity, Scd4xCarbonDioxide, Scd4xTemperature
 from sensirion_i2c_scd.scd4x.data_types import Scd4xTemperatureOffsetDegC
 from sensirion_i2c_scd.scd4x.response_types import Scd4xTemperatureOffset
 
@@ -146,7 +146,7 @@ class Scd4xI2cCmdReadMeasurement(Scd4xI2cCmdBase):
         co2 = int(unpack(">H", checked_data[0:2])[0])  # uint16
         temperature = int(unpack(">H", checked_data[2:4])[0])  # uint16
         humidity = int(unpack(">H", checked_data[4:6])[0])  # uint16
-        return Scd4xCarbonDioxid(co2), Scd4xTemperature(temperature), Scd4xHumidity(humidity)
+        return Scd4xCarbonDioxide(co2), Scd4xTemperature(temperature), Scd4xHumidity(humidity)
 
 
 class Scd4xI2cCmdStopPeriodicMeasurement(Scd4xI2cCmdBase):

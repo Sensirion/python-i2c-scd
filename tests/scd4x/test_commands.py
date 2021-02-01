@@ -9,7 +9,7 @@ import time
 from sensirion_i2c_driver.errors import I2cNackError
 
 from sensirion_i2c_scd.scd4x.data_types import Scd4xPowerMode
-from sensirion_i2c_scd.scd4x.response_types import Scd4xTemperature, Scd4xHumidity, Scd4xCarbonDioxid, \
+from sensirion_i2c_scd.scd4x.response_types import Scd4xTemperature, Scd4xHumidity, Scd4xCarbonDioxide, \
     Scd4xTemperatureOffset
 
 
@@ -30,7 +30,7 @@ def test_periodic_measurement(scd4x, power_mode):
     co2, t, rh = scd4x.read_measurement()
     scd4x.stop_periodic_measurement()
 
-    assert type(co2) is Scd4xCarbonDioxid
+    assert type(co2) is Scd4xCarbonDioxide
     assert type(co2.ticks) is int
     assert type(t) is Scd4xTemperature
     assert type(t.ticks) is int
@@ -128,7 +128,7 @@ def test_measure_single_shot(scd4x):
     """
     scd4x.measure_single_shot()
     co2, t, rh = scd4x.read_measurement()
-    assert type(co2) is Scd4xCarbonDioxid
+    assert type(co2) is Scd4xCarbonDioxide
     assert type(t) is Scd4xTemperature
     assert type(rh) is Scd4xHumidity
 
@@ -141,7 +141,7 @@ def test_measure_single_shot_rht_only(scd4x):
     """
     scd4x.measure_single_shot_rht_only()
     co2, t, rh = scd4x.read_measurement()
-    assert type(co2) is Scd4xCarbonDioxid
+    assert type(co2) is Scd4xCarbonDioxide
     assert type(t) is Scd4xTemperature
     assert type(rh) is Scd4xHumidity
 
