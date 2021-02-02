@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Documentation &mdash; sensirion-i2c-scd 0.1.0 documentation</title>
+  <title>API Documentation &mdash; sensirion-i2c-scd 0.1.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
             
           
@@ -238,7 +238,7 @@ as tuple</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>co2 (<a class="reference internal" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid" title="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scd4xCarbonDioxid</span></code></a>) -
+<li>co2 (<code class="xref py py-class docutils literal notranslate"><span class="pre">Scd4xCarbonDioxid</span></code>) -
 CO₂ response object</li>
 <li>temperature (<a class="reference internal" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xTemperature" title="sensirion_i2c_scd.scd4x.response_types.Scd4xTemperature"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scd4xTemperature</span></code></a>) -
 Temperature response object.</li>
@@ -755,7 +755,7 @@ the interpreted data.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>bytes</em>) – Received raw bytes from the read operation.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>co2 (<a class="reference internal" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid" title="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scd4xCarbonDioxid</span></code></a>) -
+<li>co2 (<code class="xref py py-class docutils literal notranslate"><span class="pre">Scd4xCarbonDioxid</span></code>) -
 CO₂ response object</li>
 <li>temperature (<a class="reference internal" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xTemperature" title="sensirion_i2c_scd.scd4x.response_types.Scd4xTemperature"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scd4xTemperature</span></code></a>) -
 Temperature response object.</li>
@@ -1746,10 +1746,10 @@ available.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid">
-<em class="property">class </em><code class="descclassname">sensirion_i2c_scd.scd4x.response_types.</code><code class="descname">Scd4xCarbonDioxid</code><span class="sig-paren">(</span><em>ticks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sensirion_i2c_scd/scd4x/response_types.html#Scd4xCarbonDioxid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid" title="Permalink to this definition">¶</a></dt>
+<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide">
+<em class="property">class </em><code class="descclassname">sensirion_i2c_scd.scd4x.response_types.</code><code class="descname">Scd4xCarbonDioxide</code><span class="sig-paren">(</span><em>ticks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sensirion_i2c_scd/scd4x/response_types.html#Scd4xCarbonDioxide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a measurement response for the humidity.</p>
-<p>With the <a class="reference internal" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.ticks" title="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.ticks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ticks</span></code></a> you can access the raw data as received from the
+<p>With the <a class="reference internal" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.ticks" title="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.ticks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ticks</span></code></a> you can access the raw data as received from the
 device. For the converted value the <code class="xref py py-attr docutils literal notranslate"><span class="pre">percent_rh</span></code> attribute is
 available.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1761,20 +1761,20 @@ available.</p>
 </tbody>
 </table>
 <dl class="method">
-<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>ticks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sensirion_i2c_scd/scd4x/response_types.html#Scd4xCarbonDioxid.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>ticks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sensirion_i2c_scd/scd4x/response_types.html#Scd4xCarbonDioxide.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance from the received raw data.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.ticks">
-<code class="descname">ticks</code><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.ticks" title="Permalink to this definition">¶</a></dt>
+<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.ticks">
+<code class="descname">ticks</code><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.ticks" title="Permalink to this definition">¶</a></dt>
 <dd><p>The ticks (int) as received from the device.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.co2">
-<code class="descname">co2</code><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxid.co2" title="Permalink to this definition">¶</a></dt>
+<dt id="sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.co2">
+<code class="descname">co2</code><a class="headerlink" href="#sensirion_i2c_scd.scd4x.response_types.Scd4xCarbonDioxide.co2" title="Permalink to this definition">¶</a></dt>
 <dd><p>CO2 ppm.</p>
 </dd></dl>
 
