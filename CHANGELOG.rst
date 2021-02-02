@@ -1,9 +1,8 @@
 CHANGELOG
 ---------
 
-Unreleased
-::::::::::
-
+0.1.1
+:::::
 - [`fixed`] Fix typo: Carbon Dioxide
 
 
