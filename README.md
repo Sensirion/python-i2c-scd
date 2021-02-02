@@ -1,4 +1,4 @@
-# Python Driver for Sensirion I²C Carbon Dioxid Sensor
+# Python Driver for Sensirion I²C Carbon Dioxide Sensor
 
 This repository contains the Python driver to communicate with Sensirion
 CO2 sensors using the I²C interface. For details, please

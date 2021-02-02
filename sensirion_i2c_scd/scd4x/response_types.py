@@ -59,7 +59,7 @@ class Scd4xHumidity(object):
         return '{:0.1f} %RH'.format(self.percent_rh)
 
 
-class Scd4xCarbonDioxid(object):
+class Scd4xCarbonDioxide(object):
     """
     Represents a measurement response for the humidity.
 
