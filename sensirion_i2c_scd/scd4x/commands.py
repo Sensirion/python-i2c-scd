@@ -625,7 +625,7 @@ class Scd4xI2cCmdPerformSelfTest(Scd4xI2cCmdBase):
             command=0x3639,
             tx_data=None,
             rx_length=3,
-            read_delay=5.5,
+            read_delay=10.0,
             timeout=0,
             post_processing_time=0.0,
         )
@@ -725,7 +725,7 @@ class Scd4xI2cCmdMeasureSingleShot(Scd4xI2cCmdBase):
             rx_length=None,
             read_delay=0.0,
             timeout=0,
-            post_processing_time=1.35,
+            post_processing_time=5.0,
         )
 
 
