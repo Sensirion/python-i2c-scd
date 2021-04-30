@@ -54,7 +54,7 @@ setup(
     description='I2C driver for the Sensirion CO2 Sensor SCD4x',
     license='BSD',
     keywords='I2C SCD4x SCD41 Sensirion',
-    url='http://developers.sensirion.com',
+    url='https://sensirion.github.io/python-i2c-scd/',
     packages=find_packages(exclude=['tests', 'tests.*']),
     long_description=long_description,
     python_requires=python_requires,
