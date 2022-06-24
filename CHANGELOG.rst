@@ -1,6 +1,10 @@
 CHANGELOG
 ---------
 
+Unreleased
+::::::::::
+- [`fixed`] Set the RH/T conversion constant to 65535.0
+
 0.1.2
 :::::
 - [`changed`] Increase timing for single shot from 1350ms to 5000ms

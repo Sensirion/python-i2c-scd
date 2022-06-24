@@ -26,7 +26,7 @@ def test_co2(value):
 @pytest.mark.parametrize("value", [
     dict({'ticks': 0, 'degrees_celsius': -45., 'degrees_fahrenheit': -49.}),
     dict(
-        {'ticks': 65536, 'degrees_celsius': 130., 'degrees_fahrenheit': 266.}),
+        {'ticks': 65535, 'degrees_celsius': 130., 'degrees_fahrenheit': 266.}),
 ])
 def test_temperature(value):
     """
@@ -44,7 +44,7 @@ def test_temperature(value):
 
 @pytest.mark.parametrize("value", [
     dict({'ticks': 0, 'percent_rh': 0.}),
-    dict({'ticks': 65536, 'percent_rh': 100.}),
+    dict({'ticks': 65535, 'percent_rh': 100.}),
 ])
 def test_humidity(value):
     """
