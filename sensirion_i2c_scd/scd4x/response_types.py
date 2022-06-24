@@ -24,10 +24,10 @@ class Scd4xTemperature(object):
         self.ticks = ticks
 
         #: The converted temperature in °C.
-        self.degrees_celsius = -45. + 175. * ticks / 65536.
+        self.degrees_celsius = -45. + 175. * ticks / 65535.
 
         #: The converted temperature in °F.
-        self.degrees_fahrenheit = -49. + 315. * ticks / 65536.
+        self.degrees_fahrenheit = -49. + 315. * ticks / 65535.
 
     def __str__(self):
         return '{:0.1f} °C'.format(self.degrees_celsius)
@@ -53,7 +53,7 @@ class Scd4xHumidity(object):
         self.ticks = ticks
 
         #: The converted humidity in %RH.
-        self.percent_rh = 100. * ticks / 65536.
+        self.percent_rh = 100. * ticks / 65535.
 
     def __str__(self):
         return '{:0.1f} %RH'.format(self.percent_rh)
