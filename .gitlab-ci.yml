@@ -69,7 +69,7 @@ deploy_stable:
 deploy_docs:
   stage: deploy
   tags: [linux, docker]
-  image: registry.gitlab.sensirion.lokal/sensirion/docker/docker-python:3.6-18.04-1.1.0
+  image: registry.gitlab.sensirion.lokal/sensirion/docker/docker-python:3.8-20.04-2.7.0
   dependencies: []
   only: [master, tags]
   script:
