@@ -1,19 +1,37 @@
 # Python Driver for Sensirion I²C Carbon Dioxide Sensor
 
 This repository contains the Python driver to communicate with Sensirion
-CO2 sensors using the I²C interface. For details, please
-read the package description in [README.rst](README.rst).
+SCD4x CO2 sensors using the I²C interface.
 
+<center><img src="images/SCD4x.png" width="300px"></center>(https://sensirion.com/my-scd-ek)
+
+Click [here](https://sensirion.com/my-scd-ek) to learn more about the SCD4x
+sensor and the SCD41 Evaluation Kit Board.
+
+Click [here](https://sensirion.com/products/product-categories/co2/)
+to learn more about the Sensirion SCD4x sensor family.
 
 ## Supported Sensors
 
+* SCD40
 * SCD41
+* SCD42
 
 ## Usage
 
-See package description in [README.rst](README.rst) and user manual at
-[https://sensirion.github.io/python-i2c-scd/](https://sensirion.github.io/python-i2c-scd/).
+See user manual at [https://sensirion.github.io/python-i2c-scd/](https://sensirion.github.io/python-i2c-scd/).
 
+### Connecting the SCD41 Evaluation Kit Board
+
+Your sensor has the four different connectors: VCC, GND, SDA and SCL. The
+provided jumper wire cables have the following colors.
+
+ *SCD4x*  | *Jumper Wire*
+ :------: | :-----------:
+   VCC    |      Red
+   GND    |     Black
+   SDA    |     Green
+   SCL    |     Yellow
 
 ## Development
 
