@@ -24,6 +24,7 @@ extras_require = {
         'sensirion-shdlc-sensorbridge~=0.1.1'
     ],
     'docs': [
+        'jinja2<3.1',
         'sphinx~=2.2.1',
         'sphinx-rtd-theme~=0.4.3',
     ]
