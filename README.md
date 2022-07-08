@@ -3,7 +3,7 @@
 This repository contains the Python driver to communicate with Sensirion
 SCD4x CO2 sensors using the I²C interface.
 
-<center><img src="images/SCD4x.png" width="300px"></center>(https://sensirion.com/my-scd-ek)
+[<center><img src="images/SCD4x.png" width="300px"></center>](https://sensirion.com/my-scd-ek)
 
 Click [here](https://sensirion.com/my-scd-ek) to learn more about the SCD4x
 sensor and the SCD41 Evaluation Kit Board.
