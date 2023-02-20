@@ -1,58 +1,61 @@
 Quick Start
 ===========
 
-SensorBridge Example
---------------------
+Execute measurements with SensorBridge
+=======================================
 
-Following example code shows how to use this driver with a Sensirion SCD41
-connected to the computer using a `Sensirion SEK-SensorBridge`_. The driver
-for the SensorBridge can be installed with
+The following steps show how to use this driver on a Windows system using the `Sensirion SEK-SensorBridge`_ to
+execute a simple measurement.
 
-.. sourcecode:: bash
+1. Install the SCD4x driver and all required packages as described in :ref:`Installation`.
+2. Install the driver for the `Sensirion SEK-SensorBridge`_
 
-    pip install sensirion-shdlc-sensorbridge
+   .. sourcecode:: bash
 
+        pip install sensirion-shdlc-sensorbridge
 
-.. sourcecode:: python
+3. Connect the SEK-SensorBridge to your PC over USB
+4. Connect the SCD4x sensor to the SEK-SensorBridge
+5. Run the example script from the root of the repository.
 
-    import time
-    from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
-    from sensirion_shdlc_sensorbridge import SensorBridgePort, \
-        SensorBridgeShdlcDevice, SensorBridgeI2cProxy
-    from sensirion_i2c_driver import I2cConnection
-    from sensirion_i2c_scd import Scd4xI2cDevice
+   By default the script assumes the SensorBridge is connected to :code:`COM1` serial port. If this is different on your system,
+   pass the port in use with the :code:`--serial-port` parameter as outlined below.
 
-    # Connect to the SensorBridge with default settings:
-    #  - baudrate:      460800
-    #  - slave address: 0
-    with ShdlcSerialPort(port='COM1', baudrate=460800) as port:
-        bridge = SensorBridgeShdlcDevice(ShdlcConnection(port), slave_address=0)
-        print("SensorBridge SN: {}".format(bridge.get_serial_number()))
+   .. sourcecode:: bash
 
-        # Configure SensorBridge port 1 for SCD4x
-        bridge.set_i2c_frequency(SensorBridgePort.ONE, frequency=100e3)
-        bridge.set_supply_voltage(SensorBridgePort.ONE, voltage=3.3)
-        bridge.switch_supply_on(SensorBridgePort.ONE)
-
-        # Create SCD41 device
-        i2c_transceiver = SensorBridgeI2cProxy(bridge, port=SensorBridgePort.ONE)
-        scd41 = Scd4xI2cDevice(I2cConnection(i2c_transceiver))
-
-        # start periodic measurement in high power mode
-        scd41.start_periodic_measurement()
-
-        # Measure every 5 seconds
-        while True:
-            time.sleep(5)
-            co2, temperature, humidity = scd41.read_measurement()
-            # use default formatting for printing output:
-            print("{}, {}, {}".format(co2, temperature, humidity))
-            # custom printing of attributes:
-            print("{:d} ppm CO2, {:0.2f} °C ({} ticks), {:0.1f} %RH ({} ticks)".format(
-                co2.co2,
-                temperature.degrees_celsius, temperature.ticks,
-                humidity.percent_rh, humidity.ticks))
-        scd41.stop_periodic_measurement()
+        python examples/example_usage_sensorbridge_scd4x.py --serial-port <your COM port>
 
 
-.. _Sensirion SEK-SensorBridge: https://www.sensirion.com/sensorbridge/
+.. _Sensirion SEK-SensorBridge: https://developer.sensirion.com/sensirion-products/sek-sensorbridge/
+
+
+Example script
+~~~~~~~~~~~~~~
+
+.. literalinclude:: ../examples/example_usage_sensorbridge_scd4x.py
+    :language: python
+
+
+Execute measurements using internal Linux I²C driver
+====================================================
+
+On Linux systems it is furthermore possible to use the Linux user space I²C driver directly.
+How this can be done is shown in the following.
+
+1. Install the SCD4x driver and all required packages as described in :ref:`Installation`.
+2. Connect the SCD4x sensor to the I²C port of your system (for example to the I²C port 1 of a Raspberry Pi).
+3. Run the example script from the root of the repository.
+
+   By default the script assumes you have the sensor connected to :code:`/dev/i2c-1`.
+   If this is different on your system, pass the port in use with the :code:`--i2c-port` parameter as outlined below.
+
+   .. sourcecode:: bash
+
+      python examples/example_usage_linux_scd4x.py --i2c-port <your I2C port>
+
+Example script
+~~~~~~~~~~~~~~
+
+.. literalinclude:: ../examples/example_usage_linux_scd4x.py
+    :language: python
+
