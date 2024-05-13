@@ -10,3 +10,5 @@ on:
 jobs:
   test:
     uses: sensirion/.github/.github/workflows/driver.python.test.yml@main
+    with:
+      hw-test-flag: needs_device
