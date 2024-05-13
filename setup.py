@@ -19,8 +19,8 @@ install_requires = [
 extras_require = {
     'test': [
         'flake8~=3.7.8',
-        'pytest~=3.5.0',
-        'pytest-cov~=2.5.1',
+        'pytest~=6.2.5',
+        'pytest-cov~=3.0.0',
         'sensirion-shdlc-sensorbridge~=0.1.1'
     ],
     'docs': [
