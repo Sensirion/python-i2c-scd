@@ -1,5 +1,7 @@
 # Python Driver for Sensirion I²C Carbon Dioxide Sensor
 
+<b>This driver repository is deprecated. The Python SCD4x driver has been moved to [https://github.com/Sensirion/python-i2c-scd4x](https://github.com/Sensirion/python-i2c-scd4x).</b>
+
 This repository contains the Python driver to communicate with Sensirion
 SCD4x CO2 sensors using the I²C interface.
 
